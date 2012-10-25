@@ -8,6 +8,6 @@ $python app.py
 Notes: 
 -makedb.py only needs to run on the first run. 
 -Might make sense to start the stream first to saturate the database
--tags.py are the search terms. If changing anything in here will dynamically
+-tags.py are the search terms. Changing anything in here will dynamically
   change what is displayed
 
