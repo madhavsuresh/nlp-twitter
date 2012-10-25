@@ -16,7 +16,7 @@ render = web.template.render('templates/')
 app = web.application(urls, globals())
 flag = 0
 update = 0
-dbconn = sqlite3.connect('../tweetz.db',check_same_thread=False)
+dbconn = sqlite3.connect('./tweets.db',check_same_thread=False)
 
 keys = ['id','tweet','sname','timestamp','category','url']
 r_server = redis.Redis('localhost')

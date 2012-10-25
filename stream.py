@@ -12,7 +12,7 @@ category_list = tags.category_list
 
 
 STREAM_URL = 'https://stream.twitter.com/1/statuses/filter.json'
-dbconn = sqlite3.connect('../tweetz.db',check_same_thread=False)
+dbconn = sqlite3.connect('./tweets.db',check_same_thread=False)
 cur = dbconn.cursor()
 dbconn.isolation_level = None
 r_server = redis.Redis('localhost')
@@ -78,7 +78,7 @@ def hose(data):
             lst = (tweet,screen_name,time_stamp,category[1],url,)
             #jprint category
             #$print category[1]
-            cur.execute('INSERT into tweetz (tweet,sname,timestamp,category,location) VALUES (?,?,?,?,?)',lst)
+            cur.execute('INSERT into tweetz (tweet,sname,timestamp,category,linkz) VALUES (?,?,?,?,?)',lst)
 
 def categorizeTweet(tweet,category):
 
