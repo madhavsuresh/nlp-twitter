@@ -1,0 +1,31 @@
+<!doctype html>
+
+<html>
+
+    <head>
+        <title>Python and AJAX tutorial for beginners with webpy and jQuery</title>
+        <link rel="stylesheet" type="text/css" href="static/tutorial.css" />
+        
+        <script type="text/javascript" src="static/jquery.js"></script>
+        <script type="text/javascript">
+        console.log('herlwer')
+		$.ajax({
+  url: 'http://localhost:8080',
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  },
+  error: function(XMLHttpRequest, textStatus, errorThrown) {
+    console.log(textStatus, errorThrown);
+  }
+});
+
+               
+        </script>
+    </head>
+    
+    <body>
+       <span id="foo"></span>        
+    </body>
+    
+</html>

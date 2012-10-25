@@ -1,0 +1,157 @@
+$def with (dict,disp_list,cat_list)
+
+<html>
+
+    <head>
+        <title>Python and AJAX tutorial for beginners with webpy and jQuery</title>
+        <link rel="stylesheet" type="text/css" href="../static/tutorial.css" />
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <link href='http://fonts.googleapis.com/css?family=Gudea|Open+Sans+Condensed:700,300' rel='stylesheet' type='text/css'>
+        
+        <script type="text/javascript" src="../static/jquery.js"></script>
+
+        <body>
+      <div id="container">
+  <div id="main_text" class="pair">
+  <ul id="policies">
+  $for key in cat_list:
+    <li class="policy_button" data-value = "#$key"> <a class="policy_button" href="$key"> $cat_list[key] </a></li> 
+  </ul>
+
+  $for key in disp_list:
+    <div class="panel" id="$key">
+    <h1> $disp_list[key] </h1>
+    <ul id="tweetz" >
+    $for c in dict[key]:
+      <li class="tweet">
+      <span class="thetweet">
+      $c['tweet']
+      </span>
+      <br/>
+      <span class="subtext">
+        <a class="tweetAnchor" href="http://twitter.com/#!/$c['sname']">@$c['sname']</a>, <span class="timestamp">$c['timestamp']</span>
+      </span>
+      </li>
+    </ul>
+    </div>
+    <br/>
+    </div>
+    <div class="pair" id="second_half">
+    <div id="chart_div" style="width: 440; height: 400px;"></div>
+    <ul id="top_list">
+      <li id="top_list0"> </li>
+      <li id="top_list1"></li>
+      <li id="top_list2"></li>
+      <li id="top_list3"></li>
+      <li id="top_list4"></li>
+      <li id="top_list5"></li>
+    </div>
+
+  </div>
+</body>
+<script>
+  var pathname = window.location.pathname;
+
+  setInterval(function(){
+    jQuery.ajax({
+      type: "GET",
+      url: "http://localhost:8080/getter" + pathname,
+      dataType: 'json',
+      success: function(data){
+        $$.each(data,function(index,value){
+          var tweetSpan = $$('#tweetz li').find('.thetweet').get(index);
+          var subText = $$('#tweetz li').find('.subtext').get(index);
+          $$(tweetSpan).text(value.tweet);
+          var url = 'http://twitter.com/#!/' + value.sname 
+          $$(subText).find('.tweetAnchor').attr('href',url);
+          var handl = '@' + value.sname;
+          $$(subText).find('.tweetAnchor').text(handl);
+          $$(subText).find('.timestamp').text(value.timestamp);
+        });
+
+      }
+    });
+  },
+  5000);
+  setInterval(function(){
+          drawChart();
+  },10000);
+  function getTop(){
+    jQuery.ajax({
+      type: "GET",
+      url: "http://localhost:8080/topfive" + pathname,
+      dataType: 'json',
+      success: function(data){
+        $$.each(data,function(index,value){
+          $$($$('#top_list li').get(index)).text(value[0]); //+ ' - ' + value[1]);;
+          console.log(value[2])
+          var tl = '#top_list' + index;
+
+          $$(tl).animate({
+            fontSize: value[2] +""
+          
+          
+          },500);
+          //console.log(tl);
+        });
+      }
+    });
+  }
+
+  setInterval(function(){
+    getTop();
+  },
+  1500);
+
+
+$$(document).ready(function() {
+    console.log(pathname.substring(1,pathname.length))
+});
+  <!--Load the AJAX API-->
+    
+    // Load the Visualization API and the piechart package.
+    google.load('visualization', '1', {'packages':['corechart']});
+      
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(loadables);
+      
+    function loadables(){
+      drawChart();
+      getTop();
+    }
+    function drawPie(){
+      google.visualization.drawChart({
+        chartType : 'PieChart',
+        dataSourceUrl: 'http://localhost:8080/pietime/',
+        refreshInterval: 5,
+        containerId: 'chart_div'
+      });
+    }
+    function drawChart() {
+      var jsonData = $$.ajax({
+          url: "http://localhost:8080/pietime/",
+          dataType:"json",
+          async: false
+          }).responseText;
+
+     // var query = new google.visualization.Query('http://localhost:8080/pietime/');
+      //query.setRefreshInterval(10);
+      //query.send(function(qr){
+        //table = qr.getDataTable();
+        //var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        //chart.draw(table, {width: 700, height: 400});
+        
+      //});
+      // Create our data table out of JSON data loaded from server.
+      var data = new google.visualization.DataTable(jsonData);
+
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+      chart.draw(data, {width: 700, height: 400});
+
+    }
+
+    </script>
+</script>
+
+</html>
